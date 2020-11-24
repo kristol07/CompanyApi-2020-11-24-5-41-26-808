@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -48,6 +49,22 @@ namespace CompanyApiTest.Controllers
             var response = await client.PostAsync($"/companies", requestBody);
 
             Assert.Equal(StatusCodes.Status409Conflict, (int)response.StatusCode);
+        }
+
+        [Fact]
+        public async Task Should_return_all_companies_when_get_all()
+        {
+            var company = new Company("comp1");
+            string request = JsonConvert.SerializeObject(company);
+            StringContent requestBody = new StringContent(request, Encoding.UTF8, "application/json");
+            await client.PostAsync($"/companies", requestBody);
+
+            var response = await client.GetAsync("/companies");
+
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var actualCompanies = JsonConvert.DeserializeObject<IList<Company>>(responseString);
+            Assert.Equal(new List<Company>() { company }, actualCompanies);
         }
     }
 }

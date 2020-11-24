@@ -25,5 +25,11 @@ namespace CompanyApi.Controllers
             companies.Add(company);
             return Ok(company);
         }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Company>>> GetAllCompaniesAsync()
+        {
+            return Ok(companies);
+        }
     }
 }
