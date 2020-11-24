@@ -60,5 +60,29 @@ namespace CompanyApi.Controllers
                 return NotFound();
             }
         }
+
+        [HttpPost("{companyId}/employees")]
+        public async Task<ActionResult<Employee>> AddEmployee(string companyId, Employee employee)
+        {
+            var company = companies.FirstOrDefault(comp => comp.Id == companyId);
+            if (company == null)
+            {
+                return NotFound();
+            }
+
+            if (company.Employees.Contains(employee))
+            {
+                return Conflict();
+            }
+            
+            company.Employees.Add(employee);
+            return employee;
+        }
+
+        [HttpDelete]
+        public async Task DeleteAll()
+        {
+            companies.Clear();
+        }
     }
 }

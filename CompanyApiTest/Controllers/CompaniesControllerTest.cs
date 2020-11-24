@@ -22,6 +22,7 @@ namespace CompanyApiTest.Controllers
             TestServer server = new TestServer(new WebHostBuilder()
                 .UseStartup<Startup>());
             client = server.CreateClient();
+            client.DeleteAsync("/companies");
         }
 
         [Fact]
@@ -101,6 +102,25 @@ namespace CompanyApiTest.Controllers
             var actualCompany = JsonConvert.DeserializeObject<Company>(responseString);
             Assert.Equal(company.Id, actualCompany.Id);
             Assert.Equal(companyToUpdate.Name, actualCompany.Name);
+        }
+
+        [Fact]
+        public async Task Should_add_new_employee_if_not_existed()
+        {
+            var company = new Company("comp1");
+            string companyRequest = JsonConvert.SerializeObject(company);
+            StringContent companyRequestBody = new StringContent(companyRequest, Encoding.UTF8, "application/json");
+            await client.PostAsync($"/companies", companyRequestBody);
+
+            var employee = new Employee("employ1", 100);
+            string request = JsonConvert.SerializeObject(employee);
+            StringContent requestBody = new StringContent(request, Encoding.UTF8, "application/json");
+            var response = await client.PostAsync($"/companies/{company.Id}/employees", requestBody);
+
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var actualEmployee = JsonConvert.DeserializeObject<Employee>(responseString);
+            Assert.Equal(employee, actualEmployee);
         }
     }
 }
