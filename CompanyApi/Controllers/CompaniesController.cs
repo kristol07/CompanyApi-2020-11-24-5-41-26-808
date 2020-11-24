@@ -12,5 +12,13 @@ namespace CompanyApi.Controllers
     [Route("[controller]")]
     public class CompaniesController : ControllerBase
     {
+        private static IList<Company> companies = new List<Company>();
+
+        [HttpPost]
+        public async Task<ActionResult<Company>> AddCompany(Company company)
+        {
+            companies.Add(company);
+            return Ok(company);
+        }
     }
 }
