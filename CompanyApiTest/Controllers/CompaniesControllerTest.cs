@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using CompanyApi;
@@ -65,6 +66,22 @@ namespace CompanyApiTest.Controllers
             var responseString = await response.Content.ReadAsStringAsync();
             var actualCompanies = JsonConvert.DeserializeObject<IList<Company>>(responseString);
             Assert.Equal(new List<Company>() { company }, actualCompanies);
+        }
+
+        [Fact]
+        public async Task Should_return_specific_company_when_get_company_with_id()
+        {
+            var company = new Company("comp1");
+            string request = JsonConvert.SerializeObject(company);
+            StringContent requestBody = new StringContent(request, Encoding.UTF8, "application/json");
+            await client.PostAsync($"/companies", requestBody);
+
+            var response = await client.GetAsync($"/companies/{company.Id}");
+
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var actualCompany = JsonConvert.DeserializeObject<Company>(responseString);
+            Assert.Equal(company, actualCompany);
         }
     }
 }

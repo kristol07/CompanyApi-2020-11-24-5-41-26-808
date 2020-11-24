@@ -31,5 +31,19 @@ namespace CompanyApi.Controllers
         {
             return Ok(companies);
         }
+
+        [HttpGet("{companyId}")]
+        public async Task<ActionResult<Company>> GetCompanyAsync(string companyId)
+        {
+            var company = companies.FirstOrDefault(company => company.Id == companyId);
+            if (company != null)
+            {
+                return Ok(company);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
     }
 }
