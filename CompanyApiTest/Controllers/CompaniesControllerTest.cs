@@ -169,5 +169,23 @@ namespace CompanyApiTest.Controllers
             Assert.Equal(employeeToUpsert.Name, actualEmployee.Name);
             Assert.Equal(employeeToUpsert.Salary, actualEmployee.Salary);
         }
+
+        [Fact]
+        public async Task Should_delete_employee_when_delete_employee()
+        {
+            var company = new Company("comp1");
+            string companyRequest = JsonConvert.SerializeObject(company);
+            StringContent companyRequestBody = new StringContent(companyRequest, Encoding.UTF8, "application/json");
+            await client.PostAsync($"/companies", companyRequestBody);
+            var employee = new Employee("employ1", 100);
+            string employeeRequest = JsonConvert.SerializeObject(employee);
+            StringContent employeeRequestBody = new StringContent(employeeRequest, Encoding.UTF8, "application/json");
+            await client.PostAsync($"/companies/{company.Id}/employees", employeeRequestBody);
+
+            var response = await client.DeleteAsync($"/companies/{company.Id}/employees/{employee.Id}");
+
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(StatusCodes.Status204NoContent, (int)response.StatusCode);
+        }
     }
 }

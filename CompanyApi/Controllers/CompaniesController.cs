@@ -111,6 +111,25 @@ namespace CompanyApi.Controllers
             return Ok(employee);
         }
 
+        [HttpDelete("{companyId}/employees/{employeeId}")]
+        public async Task<ActionResult> DeleteEmployee(string companyId, string employeeId)
+        {
+            var company = companies.FirstOrDefault(comp => comp.Id == companyId);
+            if (company == null)
+            {
+                return NotFound();
+            }
+
+            var employee = company.Employees.FirstOrDefault(employee => employee.Id == employeeId);
+            if (employee == null)
+            {
+                return NotFound();
+            }
+
+            company.Employees.Remove(employee);
+            return NoContent();
+        }
+
         [HttpDelete]
         public async Task DeleteAll()
         {
