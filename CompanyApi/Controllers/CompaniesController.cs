@@ -74,7 +74,7 @@ namespace CompanyApi.Controllers
             {
                 return Conflict();
             }
-            
+
             company.Employees.Add(employee);
             return Ok(employee);
         }
@@ -89,6 +89,26 @@ namespace CompanyApi.Controllers
             }
 
             return Ok(company.Employees);
+        }
+
+        [HttpPatch("{companyId}/employees/{employeeId}")]
+        public async Task<ActionResult<Employee>> GetAllEmployees(string companyId, string employeeId, EmployeeToUpsert employeeToUpsert)
+        {
+            var company = companies.FirstOrDefault(comp => comp.Id == companyId);
+            if (company == null)
+            {
+                return NotFound();
+            }
+
+            var employee = company.Employees.FirstOrDefault(employee => employee.Id == employeeId);
+            if (employee == null)
+            {
+                return NotFound();
+            }
+
+            employee.Name = employeeToUpsert.Name;
+            employee.Salary = employeeToUpsert.Salary;
+            return Ok(employee);
         }
 
         [HttpDelete]

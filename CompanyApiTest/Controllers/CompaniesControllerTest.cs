@@ -142,5 +142,32 @@ namespace CompanyApiTest.Controllers
             var actualEmployees = JsonConvert.DeserializeObject<IList<Employee>>(responseString);
             Assert.Equal(new List<Employee>() { employee }, actualEmployees);
         }
+
+        [Fact]
+        public async Task Should_return_updated_employee_when_update_existing_employee()
+        {
+            var company = new Company("comp1");
+            string companyRequest = JsonConvert.SerializeObject(company);
+            StringContent companyRequestBody = new StringContent(companyRequest, Encoding.UTF8, "application/json");
+            await client.PostAsync($"/companies", companyRequestBody);
+            var employee = new Employee("employ1", 100);
+            string employeeRequest = JsonConvert.SerializeObject(employee);
+            StringContent employeeRequestBody = new StringContent(employeeRequest, Encoding.UTF8, "application/json");
+            await client.PostAsync($"/companies/{company.Id}/employees", employeeRequestBody);
+
+            var employeeToUpsert = new EmployeeToUpsert("employ2", 200);
+            string newEmployeeRequest = JsonConvert.SerializeObject(employeeToUpsert);
+            StringContent newEmployeeRequestBody = new StringContent(newEmployeeRequest, Encoding.UTF8, "application/json");
+
+            var response =
+                await client.PatchAsync($"/companies/{company.Id}/employees/{employee.Id}", newEmployeeRequestBody);
+
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var actualEmployee = JsonConvert.DeserializeObject<Employee>(responseString);
+            Assert.Equal(employee.Id, actualEmployee.Id);
+            Assert.Equal(employeeToUpsert.Name, actualEmployee.Name);
+            Assert.Equal(employeeToUpsert.Salary, actualEmployee.Salary);
+        }
     }
 }
