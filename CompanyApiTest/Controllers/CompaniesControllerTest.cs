@@ -122,5 +122,25 @@ namespace CompanyApiTest.Controllers
             var actualEmployee = JsonConvert.DeserializeObject<Employee>(responseString);
             Assert.Equal(employee, actualEmployee);
         }
+
+        [Fact]
+        public async Task Should_return_all_employees_when_get_employees_under_specific_company()
+        {
+            var company = new Company("comp1");
+            string companyRequest = JsonConvert.SerializeObject(company);
+            StringContent companyRequestBody = new StringContent(companyRequest, Encoding.UTF8, "application/json");
+            await client.PostAsync($"/companies", companyRequestBody);
+            var employee = new Employee("employ1", 100);
+            string employeeRequest = JsonConvert.SerializeObject(employee);
+            StringContent employeeRequestBody = new StringContent(employeeRequest, Encoding.UTF8, "application/json");
+            await client.PostAsync($"/companies/{company.Id}/employees", employeeRequestBody);
+
+            var response = await client.GetAsync($"/companies/{company.Id}/employees");
+
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var actualEmployees = JsonConvert.DeserializeObject<IList<Employee>>(responseString);
+            Assert.Equal(new List<Employee>() { employee }, actualEmployees);
+        }
     }
 }

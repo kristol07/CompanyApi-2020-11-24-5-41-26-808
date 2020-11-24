@@ -76,7 +76,19 @@ namespace CompanyApi.Controllers
             }
             
             company.Employees.Add(employee);
-            return employee;
+            return Ok(employee);
+        }
+
+        [HttpGet("{companyId}/employees")]
+        public async Task<ActionResult<Employee>> GetAllEmployees(string companyId)
+        {
+            var company = companies.FirstOrDefault(comp => comp.Id == companyId);
+            if (company == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(company.Employees);
         }
 
         [HttpDelete]
