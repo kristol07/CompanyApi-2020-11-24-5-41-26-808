@@ -17,6 +17,11 @@ namespace CompanyApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Company>> AddCompany(Company company)
         {
+            if (companies.Any(comp => comp.Id == company.Id))
+            {
+                return Conflict();
+            }
+
             companies.Add(company);
             return Ok(company);
         }

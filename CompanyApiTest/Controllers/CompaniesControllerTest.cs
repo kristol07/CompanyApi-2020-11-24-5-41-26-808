@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CompanyApi;
 using CompanyApi.Models;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Newtonsoft.Json;
 using Xunit;
@@ -34,6 +35,19 @@ namespace CompanyApiTest.Controllers
             var responseString = await response.Content.ReadAsStringAsync();
             var actualCompany = JsonConvert.DeserializeObject<Company>(responseString);
             Assert.Equal(company, actualCompany);
+        }
+
+        [Fact]
+        public async Task Should_not_add_new_company_if_existed()
+        {
+            var company = new Company("comp1");
+            string request = JsonConvert.SerializeObject(company);
+            StringContent requestBody = new StringContent(request, Encoding.UTF8, "application/json");
+
+            await client.PostAsync($"/companies", requestBody);
+            var response = await client.PostAsync($"/companies", requestBody);
+
+            Assert.Equal(StatusCodes.Status409Conflict, (int)response.StatusCode);
         }
     }
 }
