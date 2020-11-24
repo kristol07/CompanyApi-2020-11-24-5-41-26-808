@@ -83,5 +83,24 @@ namespace CompanyApiTest.Controllers
             var actualCompany = JsonConvert.DeserializeObject<Company>(responseString);
             Assert.Equal(company, actualCompany);
         }
+
+        [Fact]
+        public async Task Should_return_updated_company_when_update_existing_company()
+        {
+            var company = new Company("comp1");
+            string request = JsonConvert.SerializeObject(company);
+            StringContent requestBody = new StringContent(request, Encoding.UTF8, "application/json");
+            await client.PostAsync($"/companies", requestBody);
+            var companyToUpdate = new CompanyToUpsert("comp2");
+            string requestToUpdate = JsonConvert.SerializeObject(companyToUpdate);
+            StringContent requestBodyToUpdate = new StringContent(requestToUpdate, Encoding.UTF8, "application/json");
+            var response = await client.PatchAsync($"/companies/{company.Id}", requestBodyToUpdate);
+
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var actualCompany = JsonConvert.DeserializeObject<Company>(responseString);
+            Assert.Equal(company.Id, actualCompany.Id);
+            Assert.Equal(companyToUpdate.Name, actualCompany.Name);
+        }
     }
 }

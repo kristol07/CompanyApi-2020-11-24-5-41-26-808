@@ -32,12 +32,27 @@ namespace CompanyApi.Controllers
             return Ok(companies);
         }
 
-        [HttpGet("{companyId}")]
-        public async Task<ActionResult<Company>> GetCompanyAsync(string companyId)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Company>> GetCompanyAsync(string id)
         {
-            var company = companies.FirstOrDefault(company => company.Id == companyId);
+            var company = companies.FirstOrDefault(company => company.Id == id);
             if (company != null)
             {
+                return Ok(company);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<Company>> UpdateCompany(string id, CompanyToUpsert companyToUpsert)
+        {
+            var company = companies.FirstOrDefault(company => company.Id == id);
+            if (company != null)
+            {
+                company.Name = companyToUpsert.Name;
                 return Ok(company);
             }
             else
