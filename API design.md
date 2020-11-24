@@ -17,7 +17,8 @@ Response body:
 ```json
 {
     "companyId": "",
-    "companyName": ""
+    "companyName": "",
+    "employees": []
 }
 ```
 
@@ -37,7 +38,8 @@ Response body:
 [
     {
         "companyId": "",
-        "companyName": ""
+        "companyName": "",
+        "employees": []
     },
     ...
 ]
@@ -56,7 +58,8 @@ Response body:
 ```json
 {
     "companyId": "",
-    "companyName": ""
+    "companyName": "",
+    "employees": []
 }
 ```
 
@@ -74,7 +77,8 @@ Response body:
 [
     {
         "companyId": "",
-        "companyName": ""
+        "companyName": "",
+        "employees": []
     },
     ...
 ]
@@ -101,7 +105,8 @@ Response body:
 ```json
 {
     "companyId": "",
-    "companyName": ""
+    "companyName": "",
+    "employees": []
 }
 ```
 

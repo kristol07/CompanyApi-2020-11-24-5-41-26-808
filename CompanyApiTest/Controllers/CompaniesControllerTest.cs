@@ -227,8 +227,8 @@ namespace CompanyApiTest.Controllers
             response.EnsureSuccessStatusCode();
             Assert.Equal(StatusCodes.Status204NoContent, (int)response.StatusCode);
             var companiesResponse = await client.GetAsync("/companies");
-            var compaiesResponseString = await companiesResponse.Content.ReadAsStringAsync();
-            var allCompanies = JsonConvert.DeserializeObject<IList<Company>>(compaiesResponseString);
+            var companiesResponseString = await companiesResponse.Content.ReadAsStringAsync();
+            var allCompanies = JsonConvert.DeserializeObject<IList<Company>>(companiesResponseString);
             Assert.Equal(0, allCompanies.Count);
         }
     }
