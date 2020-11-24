@@ -130,6 +130,19 @@ namespace CompanyApi.Controllers
             return NoContent();
         }
 
+        [HttpDelete("{companyId}")]
+        public async Task<ActionResult> DeleteCompany(string companyId)
+        {
+            var company = companies.FirstOrDefault(comp => comp.Id == companyId);
+            if (company == null)
+            {
+                return NotFound();
+            }
+
+            companies.Remove(company);
+            return NoContent();
+        }
+
         [HttpDelete]
         public async Task DeleteAll()
         {
