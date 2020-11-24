@@ -15,7 +15,7 @@ namespace CompanyApi.Controllers
         private static IList<Company> companies = new List<Company>();
 
         [HttpPost]
-        public async Task<ActionResult<Company>> AddCompany(Company company)
+        public async Task<ActionResult<Company>> AddCompanyAsync(Company company)
         {
             if (companies.Any(comp => comp.Id == company.Id))
             {
@@ -27,8 +27,17 @@ namespace CompanyApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Company>>> GetAllCompaniesAsync()
+        public async Task<ActionResult<IEnumerable<Company>>> GetAllCompaniesAsync(int? limit, int? offset)
         {
+            if (limit.HasValue && offset.HasValue)
+            {
+                return Ok(companies.Where(company =>
+                {
+                    var index = companies.IndexOf(company);
+                    return index >= offset && index < (offset + limit);
+                }));
+            }
+
             return Ok(companies);
         }
 
@@ -47,7 +56,7 @@ namespace CompanyApi.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<ActionResult<Company>> UpdateCompany(string id, CompanyToUpsert companyToUpsert)
+        public async Task<ActionResult<Company>> UpdateCompanyAsync(string id, CompanyToUpsert companyToUpsert)
         {
             var company = companies.FirstOrDefault(company => company.Id == id);
             if (company != null)
@@ -62,7 +71,7 @@ namespace CompanyApi.Controllers
         }
 
         [HttpPost("{companyId}/employees")]
-        public async Task<ActionResult<Employee>> AddEmployee(string companyId, Employee employee)
+        public async Task<ActionResult<Employee>> AddEmployeeAsync(string companyId, Employee employee)
         {
             var company = companies.FirstOrDefault(comp => comp.Id == companyId);
             if (company == null)
@@ -80,7 +89,7 @@ namespace CompanyApi.Controllers
         }
 
         [HttpGet("{companyId}/employees")]
-        public async Task<ActionResult<Employee>> GetAllEmployees(string companyId)
+        public async Task<ActionResult<Employee>> GetAllEmployeesAsync(string companyId)
         {
             var company = companies.FirstOrDefault(comp => comp.Id == companyId);
             if (company == null)
@@ -92,7 +101,7 @@ namespace CompanyApi.Controllers
         }
 
         [HttpPatch("{companyId}/employees/{employeeId}")]
-        public async Task<ActionResult<Employee>> GetAllEmployees(string companyId, string employeeId, EmployeeToUpsert employeeToUpsert)
+        public async Task<ActionResult<Employee>> GetAllEmployeesAsync(string companyId, string employeeId, EmployeeToUpsert employeeToUpsert)
         {
             var company = companies.FirstOrDefault(comp => comp.Id == companyId);
             if (company == null)
@@ -112,7 +121,7 @@ namespace CompanyApi.Controllers
         }
 
         [HttpDelete("{companyId}/employees/{employeeId}")]
-        public async Task<ActionResult> DeleteEmployee(string companyId, string employeeId)
+        public async Task<ActionResult> DeleteEmployeeAsync(string companyId, string employeeId)
         {
             var company = companies.FirstOrDefault(comp => comp.Id == companyId);
             if (company == null)
@@ -131,7 +140,7 @@ namespace CompanyApi.Controllers
         }
 
         [HttpDelete("{companyId}")]
-        public async Task<ActionResult> DeleteCompany(string companyId)
+        public async Task<ActionResult> DeleteCompanyAsync(string companyId)
         {
             var company = companies.FirstOrDefault(comp => comp.Id == companyId);
             if (company == null)
@@ -144,7 +153,7 @@ namespace CompanyApi.Controllers
         }
 
         [HttpDelete]
-        public async Task DeleteAll()
+        public async Task DeleteAllAsync()
         {
             companies.Clear();
         }

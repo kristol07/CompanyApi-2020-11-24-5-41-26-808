@@ -70,6 +70,29 @@ namespace CompanyApiTest.Controllers
         }
 
         [Fact]
+        public async Task Should_return_companies_in_pages_when_given_pagination()
+        {
+            var company = new Company("comp1");
+            string request = JsonConvert.SerializeObject(company);
+            StringContent requestBody = new StringContent(request, Encoding.UTF8, "application/json");
+            await client.PostAsync($"/companies", requestBody);
+
+            var response = await client.GetAsync("/companies?limit=20&offset=0");
+
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var actualCompanies = JsonConvert.DeserializeObject<IList<Company>>(responseString);
+            Assert.Equal(new List<Company>() { company }, actualCompanies);
+
+            response = await client.GetAsync("/companies?limit=20&offset=20");
+
+            response.EnsureSuccessStatusCode();
+            responseString = await response.Content.ReadAsStringAsync();
+            actualCompanies = JsonConvert.DeserializeObject<IList<Company>>(responseString);
+            Assert.Equal(0, actualCompanies.Count);
+        }
+
+        [Fact]
         public async Task Should_return_specific_company_when_get_company_with_id()
         {
             var company = new Company("comp1");
