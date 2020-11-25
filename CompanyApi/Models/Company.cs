@@ -34,8 +34,8 @@ namespace CompanyApi.Models
                 return false;
             }
 
-            return this.Id == anotherCompany.Id && this.Name == anotherCompany.Name 
-                                                && Enumerable.SequenceEqual(this.Employees, anotherCompany.Employees);
+            return this.Name == anotherCompany.Name 
+                   && Enumerable.SequenceEqual(this.Employees, anotherCompany.Employees);
         }
     }
 }

@@ -15,9 +15,10 @@ namespace CompanyApi.Controllers
         private static IList<Company> companies = new List<Company>();
 
         [HttpPost]
-        public async Task<ActionResult<Company>> AddCompanyAsync(Company company)
+        public async Task<ActionResult<Company>> AddCompanyAsync(CompanyToUpsert companyToUpsert)
         {
-            if (companies.Any(comp => comp.Id == company.Id))
+            var company = new Company(companyToUpsert.Name);
+            if (companies.Any(comp => comp.Name == company.Name))
             {
                 return Conflict();
             }
@@ -71,7 +72,7 @@ namespace CompanyApi.Controllers
         }
 
         [HttpPost("{companyId}/employees")]
-        public async Task<ActionResult<Employee>> AddEmployeeAsync(string companyId, Employee employee)
+        public async Task<ActionResult<Employee>> AddEmployeeAsync(string companyId, EmployeeToUpsert employeeToUpsert)
         {
             var company = companies.FirstOrDefault(comp => comp.Id == companyId);
             if (company == null)
@@ -79,7 +80,8 @@ namespace CompanyApi.Controllers
                 return NotFound();
             }
 
-            if (company.Employees.Contains(employee))
+            var employee = new Employee(employeeToUpsert.Name, employeeToUpsert.Salary);
+            if (company.Employees.Any(emp => emp.Name == employee.Name && emp.Salary == employee.Salary))
             {
                 return Conflict();
             }
