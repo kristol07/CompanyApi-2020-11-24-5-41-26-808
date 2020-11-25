@@ -37,7 +37,7 @@ namespace CompanyApiTest.Controllers
             response.EnsureSuccessStatusCode();
             var responseString = await response.Content.ReadAsStringAsync();
             var actualCompany = JsonConvert.DeserializeObject<Company>(responseString);
-            Assert.Equal(company.Name, actualCompany.Name);
+            Assert.Equal(company, actualCompany);
         }
 
         [Fact]
@@ -230,13 +230,6 @@ namespace CompanyApiTest.Controllers
             var companiesResponseString = await companiesResponse.Content.ReadAsStringAsync();
             var allCompanies = JsonConvert.DeserializeObject<IList<Company>>(companiesResponseString);
             Assert.Equal(0, allCompanies.Count);
-        }
-
-        private StringContent GetRequestBody(object obj)
-        {
-            string objString = JsonConvert.SerializeObject(obj);
-            StringContent body = new StringContent(objString, Encoding.UTF8, "application/json");
-            return body;
         }
     }
 }

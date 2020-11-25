@@ -31,7 +31,7 @@ namespace CompanyApi.Models
             }
 
             var anotherEmployee = (Employee)obj;
-            return this.Name == anotherEmployee.Name &&
+            return this.Id == anotherEmployee.Id && this.Name == anotherEmployee.Name &&
                    this.Salary == anotherEmployee.Salary;
         }
     }
